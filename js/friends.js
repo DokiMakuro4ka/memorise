@@ -2,7 +2,7 @@
 const friendsData = {
     dasha: {
         name: 'Даша',
-        url: 'https://www.instagram.com/', // Замените на реальную ссылку
+        url: 'https://t.me/@daariavvv',
         achievement: 'королева дедукции',
         stats: '85% разгаданных загадок',
         emoji: '👑',
@@ -10,7 +10,7 @@ const friendsData = {
     },
     alena: {
         name: 'Алёна',
-        url: 'https://t.me/', // Замените на реальную ссылку
+        url: 'https://t.me/@chockoladtkkka',
         achievement: 'мастер секретов',
         stats: 'нашла 3 тайника и 5 скрытых предметов',
         emoji: '🔍',
@@ -18,7 +18,7 @@ const friendsData = {
     },
     ilya: {
         name: 'Илья',
-        url: 'https://vk.com/', // Замените на реальную ссылку
+        url: 'https://t.me/@Plesenb_1',
         achievement: 'король зеркал',
         stats: 'разгадал 5 сложнейших головоломок',
         emoji: '🎯',
@@ -26,7 +26,7 @@ const friendsData = {
     },
     artem: {
         name: 'Артём',
-        url: 'https://wa.me/', // Замените на реальную ссылку
+        url: 'https://t.me/@Artem2719',
         achievement: 'мускулы команды',
         stats: 'открыл 2 потайные двери физической силой',
         emoji: '💪',
@@ -34,7 +34,7 @@ const friendsData = {
     },
     rita: {
         name: 'Рита',
-        url: 'https://www.tiktok.com/@', // Замените на реальную ссылку
+        url: 'https://t.me/@llis_marr',
         achievement: 'гений шифров',
         stats: 'угадала код с 1 раза в 2 квестах',
         emoji: '🧩',
