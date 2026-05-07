@@ -432,3 +432,97 @@ body {
 .modal-close:hover {
     background: rgba(196,155,63,0.2);
 }
+
+.particles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* === 1. Голографическое свечение карточек === */
+.film-card {
+    position: relative;
+    transition: box-shadow 0.4s ease, transform 0.4s ease;
+}
+.film-card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(45deg, #c49b3f, #e8b86b, #f5cd7a, #c49b3f);
+    border-radius: 34px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+}
+.film-card:hover::before {
+    opacity: 0.6;
+}
+
+/* === 2. Кастомный скроллбар (киноплёнка) === */
+::-webkit-scrollbar {
+    width: 12px;
+}
+::-webkit-scrollbar-track {
+    background: #111;
+    border-left: 1px solid #2a2a2a;
+}
+::-webkit-scrollbar-thumb {
+    background: repeating-linear-gradient(45deg, #c49b3f, #c49b3f 5px, #e8b86b 5px, #e8b86b 10px);
+    border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #f5cd7a;
+}
+
+/* === 3. Киноплёночные полосы сверху и снизу === */
+body::before, body::after {
+    content: '';
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: repeating-linear-gradient(90deg, #000, #000 15px, #222 15px, #222 30px);
+    pointer-events: none;
+    z-index: 1000;
+}
+body::before { top: 0; }
+body::after { bottom: 0; }
+
+/* === 4. Анимация счётчика просмотров (цифры) — в js, стили для лайков === */
+.like-btn {
+    background: none;
+    border: none;
+    color: #ff6b6b;
+    font-size: 1rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: transform 0.2s;
+}
+.like-btn.liked {
+    animation: likePop 0.3s ease;
+}
+@keyframes likePop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* Дополнительно: улучшенный эффект размытия для ленивых изображений */
+.lazy-image {
+    transition: filter 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+.lazy-image.loaded {
+    filter: blur(0);
+}
+
+/* Убедимся, что карточки не теряют тень */
+.card-sticky {
+    background: rgba(20,20,20,0.7);
+    backdrop-filter: blur(10px);
+}

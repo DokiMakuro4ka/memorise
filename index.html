@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Квест-воспоминания | Наша история в кадрах</title>
     
-    <!-- Meta-теги для соцсетей -->
     <meta property="og:title" content="Наши квест-воспоминания | Даша, Алёна, Илья, Артём, Рита">
     <meta property="og:description" content="6 эпичных квестов, смех до утра и незабываемые моменты">
     <meta property="og:image" content="https://quest.barabulka.su/preview.jpg">
@@ -13,36 +12,29 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     
-    <!-- Шрифты -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
     
-    <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c49b3f'%3E%3Cpath d='M18 9h-2V7c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-2h2l4 3V6l-4 3z'/%3E%3C/svg%3E">
     
-    <!-- Библиотеки -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 </head>
 <body>
 
-<!-- Фоновые эффекты -->
+<canvas id="particlesCanvas" class="particles-canvas"></canvas>
+
 <div class="film-grain"></div>
 <div class="vignette"></div>
-
-<!-- Прогресс-бар скролла -->
 <div class="progress-bar" id="progressBar"></div>
 
-<!-- Кнопка случайного воспоминания -->
 <button class="random-btn" id="randomBtn" aria-label="Случайное воспоминание">🎲</button>
-
-<!-- Переключатель звука -->
 <button class="sound-toggle" id="soundToggle" aria-label="Вкл/Выкл звук">🔊</button>
 
-<!-- Модальное окно для фото -->
 <div class="modal" id="modal">
     <div class="modal-content">
         <button class="modal-close" id="modalClose">×</button>
@@ -52,9 +44,7 @@
     </div>
 </div>
 
-<!-- Основной контент -->
 <main>
-    <!-- Hero секция -->
     <section class="hero-section">
         <div class="hero-video-bg">
             <video autoplay muted loop playsinline>
@@ -62,36 +52,75 @@
             </video>
         </div>
         <div class="hero-content">
-            <div class="title-small">ПРЕМЬЕРА</div>
-            <h1 class="title-main">НАШИ КВЕСТЫ</h1>
-            <div class="title-date">2023 — 2024</div>
+            <div class="title-small">Воспоминания</div>
+            <h1 class="title-main" id="hero-title">НАШИ КВЕСТЫ</h1>
+            <div class="title-date">2026</div>
         </div>
         <div class="hero-scroll-hint">
             <span>🎬 ПРОКРУТИТЕ ВНИЗ 🎬</span>
         </div>
     </section>
 
-    <!-- Секция с воспоминаниями -->
     <section class="filmography swiper" id="filmography">
         <div class="swiper-wrapper" id="memoriesContainer">
-            <!-- Карточки будут добавлены через JavaScript -->
+            <!-- КВЕСТ 1: Lucky Hotel. Люкс 113 -->
+            <div class="swiper-slide">
+                <div class="film-card" data-id="1">
+                    <div class="card-sticky">
+                        <div class="card-media">
+                            <div class="film-poster">
+                                <!-- Замените src на путь к вашему реальному изображению -->
+                                <img data-src="assets/images/lucky-hotel-poster.jpg" alt="Lucky Hotel. Люкс 113" class="lazy-image">
+                                <div class="film-rating">🌑 10/10 — «Тьма внутри»</div>
+                                <div class="view-counter" data-id="1">👁️ 0</div>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="film-meta">
+                                <span class="film-year">2026</span>
+                                <span class="film-director">Lucky Hotel | Люкс 113</span>
+                            </div>
+                            <h2 class="film-title">«Номер 113. Не выселяться»</h2>
+                            <div class="film-details">
+                                <div class="detail-item">📅 08.01.26 13:00</div>
+                                <div class="detail-item">💰 11 000 ₽</div>
+                                <div class="detail-item">👥 Алёна, Даша, Илья, Рита, Даня</div>
+                            </div>
+                            <p class="film-synopsis">
+                                Проклятый отель не отпускает. Эльза возвращается под чужим именем, чтобы заселиться в люкс 113. 
+                                Мы — её команда. В коридорах — шёпот, в зеркалах — лица из прошлого. 
+                                Алёна нашла дневник горничной, Даша расшифровала старые регистрационные карты, 
+                                Илья услышал шаги Томми... А Рита и Даня остановили время, когда тьма уже настигала. 
+                                Отель показал нам воспоминания, которые нельзя изменить — но можно использовать, чтобы выбраться.
+                            </p>
+                            <div class="film-quote">
+                                «Если вас поглотила тьма, значит, Томми рядом... Но мы были громче его шёпота.»
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                <button class="watch-trailer" data-id="1">📸 Смотреть фото →</button>
+                                    <a href="https://grandquest.ru/blog-richarda-vickery-ves-arhiv" target="_blank" class="memory-link" style="color:#c49b3f; text-decoration:none; font-size:0.85rem;">📜 Архив Ричарда →</a>
+                                <button class="like-btn" data-id="1">❤️ <span class="likes-count">0</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="swiper-pagination"></div>
         <div class="swiper-button-prev"></div>
         <div class="swiper-button-next"></div>
     </section>
 
-    <!-- Футер -->
     <footer class="cinema-footer">
         <div class="footer-content">
             <div class="footer-call">FADE TO BLACK</div>
             <div class="footer-names">
                 Создал <strong>Doki</strong> с любовью к настоящим звёздам этого фильма:<br>
                 <div class="friends-list">
-                    <a class="friend-link" data-friend="dasha">✨ Даша</a>
                     <a class="friend-link" data-friend="alena">🌟 Алёна</a>
-                    <a class="friend-link" data-friend="ilya">⭐ Илья</a>
                     <a class="friend-link" data-friend="artem">✨ Артём</a>
+                    <a class="friend-link" data-friend="dasha">✨ Даша</a>
+                    <a class="friend-link" data-friend="ilya">⭐ Илья</a>
                     <a class="friend-link" data-friend="rita">🌟 Рита</a>
                 </div>
             </div>
@@ -99,13 +128,12 @@
                 «Каждый квест — это новая глава нашей истории. И это лучше любого блокбастера.»
             </div>
             <div class="footer-copyright">
-                © 2025 — Воспоминания, которые останутся в вечности
+                © 2026 — Воспоминания, которые останутся в вечности
             </div>
         </div>
     </footer>
 </main>
 
-<!-- Скрипты -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="js/data.js"></script>
 <script src="js/sound.js"></script>
