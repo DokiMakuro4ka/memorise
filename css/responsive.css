@@ -1,153 +1,40 @@
-/* Tablet */
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
     .card-sticky {
+        grid-template-columns: 1fr !important;
         gap: 2rem;
         padding: 1.5rem;
     }
-    
-    .film-title {
-        font-size: 1.8rem;
+    .film-poster {
+        max-width: 300px;
     }
-    
-    .filmography {
-        padding: 2rem 1.5rem;
-    }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-    .card-sticky {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
+    .film-card {
         padding: 1rem;
     }
-    
-    .film-card {
-        margin-bottom: 4rem;
-        min-height: auto;
-    }
-    
     .random-btn, .sound-toggle {
         width: 45px;
         height: 45px;
         font-size: 1.2rem;
     }
-    
-    .random-btn {
-        bottom: 1rem;
-        right: 1rem;
+    .hero-section {
+        padding: 0;
     }
-    
-    .sound-toggle {
-        bottom: 1rem;
-        left: 1rem;
+    .cinema-footer {
+        padding: 1rem;
     }
-    
-    .friends-list {
-        gap: 0.8rem;
-    }
-    
-    .friend-link {
-        font-size: 0.9rem;
-        padding: 0.2rem 0.6rem;
-    }
-    
-    .footer-names {
-        font-size: 0.9rem;
-    }
-    
-    .film-meta {
-        flex-direction: column;
-        gap: 0.3rem;
-    }
-    
+}
+
+@media (max-width: 600px) {
     .film-details {
         flex-wrap: wrap;
     }
-    
-    .hero-scroll-hint {
-        font-size: 0.6rem;
-    }
-}
-
-/* Small Mobile */
-@media (max-width: 480px) {
-    .title-main {
-        font-size: 2.5rem;
-    }
-    
-    .filmography {
-        padding: 1rem;
-    }
-    
-    .card-sticky {
-        border-radius: 20px;
-    }
-    
-    .film-poster {
-        border-radius: 16px;
-    }
-    
-    .footer-call {
-        letter-spacing: 4px;
-        font-size: 0.7rem;
-    }
-    
     .friends-list {
-        flex-direction: row;
-        flex-wrap: wrap;
+        gap: 0.8rem;
     }
-}
-
-/* Landscape orientation */
-@media (max-height: 600px) and (orientation: landscape) {
-    .hero-section {
-        height: auto;
-        min-height: 100vh;
-        padding: 4rem 0;
+    .title-main {
+        font-size: clamp(2.4rem, 12vw, 4rem);
     }
-    
-    .film-card {
-        min-height: auto;
-        padding: 2rem 0;
-    }
-}
-
-/* Touch devices (отключаем некоторые hover эффекты) */
-@media (hover: none) {
-    .film-poster:hover img {
-        transform: scale(1);
-    }
-    
-    .random-btn:hover, .sound-toggle:hover {
-        transform: scale(1);
-    }
-    
-    .friend-link:hover {
-        transform: none;
-    }
-}
-
-/* Retina displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .film-grain {
-        opacity: 0.03;
-    }
-}
-
-/* Dark mode support (если включена системная тёмная тема) */
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: #0a0a0a;
-    }
-}
-
-/* Reduced motion (для пользователей с vestibular disorder) */
-@media (prefers-reduced-motion: reduce) {
-    * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
+    .hero-scroll-hint {
+        font-size: 0.7rem;
+        bottom: 1rem;
     }
 }

@@ -1,0 +1,449 @@
+/* Горизонтальный скролл */
+.horizontal-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.horizontal-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.horizontal-track {
+    display: flex;
+    flex-direction: row;
+    width: max-content;
+    height: 100%;
+}
+
+/* Карточка */
+.film-card {
+    min-width: 100%;
+    width: 100%;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 2rem;
+    position: relative;
+    transition: box-shadow 0.4s ease, transform 0.4s ease;
+    transform-style: preserve-3d;
+}
+
+.film-card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(45deg, #c49b3f, #e8b86b, #f5cd7a, #c49b3f);
+    border-radius: 34px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+}
+
+.film-card:hover::before {
+    opacity: 0.6;
+}
+
+/* Контент карточки */
+.card-sticky {
+    display: grid;
+    grid-template-columns: minmax(280px, 450px) 1fr;  /* постер теперь не шире 450px */
+    gap: 3rem;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    border-radius: 32px;
+    background: rgba(20,20,20,0.6);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+@supports (backdrop-filter: blur(8px)) {
+    .card-sticky {
+        backdrop-filter: blur(8px);
+    }
+}
+
+/* Постер */
+.film-poster {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    aspect-ratio: 4 / 5;
+    width: 100%;
+    max-width: 450px;   /* явное ограничение */
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+.film-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.film-poster:hover img {
+    transform: scale(1.05);
+}
+
+.view-counter,
+.film-rating {
+    position: absolute;
+    background: rgba(0,0,0,0.7);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-weight: bold;
+    z-index: 3;
+}
+
+.view-counter {
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 0.7rem;
+}
+
+.film-rating {
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.8rem;
+}
+
+/* Текстовая часть */
+.film-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+.film-year {
+    font-family: monospace;
+    color: #c49b3f;
+    font-weight: bold;
+}
+
+.film-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    margin-bottom: 1rem;
+}
+
+.film-details {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed #333;
+}
+
+.film-synopsis {
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    color: #ccc;
+}
+
+.film-quote {
+    font-style: italic;
+    border-left: 3px solid #c49b3f;
+    padding-left: 1rem;
+    margin-bottom: 1.8rem;
+    color: #c4b594;
+}
+
+/* Кнопка действия */
+.watch-trailer {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #c49b3f;
+    font-weight: 600;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: gap 0.3s ease, color 0.3s ease;
+}
+
+.watch-trailer:hover {
+    gap: 16px;
+    color: #fff;
+}
+
+/* Футер */
+.cinema-footer {
+    flex-shrink: 0;
+    background: linear-gradient(0deg, #050505, #0a0a0a);
+    border-top: 1px solid #2a2a2a;
+    padding: 1.5rem 2rem 3rem;  /* было 1rem, стало 3rem */
+    text-align: center;
+}
+
+.footer-call {
+    font-family: monospace;
+    letter-spacing: 8px;
+    color: #c49b3f;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+}
+
+.footer-names {
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.footer-names strong {
+    color: #c49b3f;
+}
+
+.friends-list {
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.friend-link {
+    color: #c49b3f;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    background: rgba(196,155,63,0.1);
+    transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
+}
+
+.friend-link:hover {
+    color: #fff;
+    background: rgba(196,155,63,0.3);
+    transform: translateY(-2px);
+}
+
+.footer-quote {
+    max-width: 500px;
+    margin: 0.8rem auto;
+    font-size: 0.8rem;
+    font-style: italic;
+    color: #888;
+}
+
+.footer-copyright {
+    margin-top: 1rem;
+    font-size: 0.65rem;
+    opacity: 0.5;
+}
+
+/* Модальное окно */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.96);
+}
+
+@supports (backdrop-filter: blur(20px)) {
+    .modal {
+        backdrop-filter: blur(20px);
+    }
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    padding: 2rem;
+    background: #1a1a1a;
+    border-radius: 20px;
+    border: 1px solid rgba(196,155,63,0.3);
+    text-align: center;
+}
+
+.modal-content img {
+    max-height: 60vh;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    color: #c49b3f;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.modal-close:hover {
+    background: rgba(196,155,63,0.2);
+    transform: rotate(90deg);
+}
+
+/* Частицы */
+.particles-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Лайк */
+.like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    color: #ff6b6b;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.like-btn.liked {
+    animation: likePop 0.3s ease;
+}
+
+@keyframes likePop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* =========================================================
+   ТИПОГРАФИКА И ВЫРАВНИВАНИЕ
+========================================================= */
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+/* Заголовок */
+.film-title {
+    text-align: left;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.75rem;
+}
+
+/* Мета-информация (год, режиссёр) */
+.film-meta {
+    text-align: left;
+    margin-bottom: 0.5rem;
+}
+
+/* Детали (длительность, цена, участники) */
+.film-details {
+    text-align: left;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    gap: 0.75rem 1.5rem;
+}
+
+.detail-item {
+    white-space: nowrap;
+}
+
+/* Описание */
+.film-synopsis {
+    text-align: left;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    max-width: 65ch; /* комфортная длина строки */
+    hyphens: auto;
+}
+
+/* Цитата */
+.film-quote {
+    text-align: left;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    max-width: 60ch;
+    hyphens: auto;
+}
+
+/* Кнопки и ссылки */
+.watch-trailer,
+.memory-link,
+.like-btn {
+    align-self: flex-start;
+}
+
+/* Отступы между блоками */
+.card-content > * + * {
+    margin-top: 0;
+}
+
+/* Адаптация под мобильные */
+@media (max-width: 600px) {
+    .detail-item {
+        white-space: normal;
+    }
+    .film-synopsis {
+        font-size: 0.9rem;
+        max-width: 100%;
+    }
+    .film-quote {
+        font-size: 0.85rem;
+        max-width: 100%;
+    }
+    .film-details {
+        gap: 0.5rem;
+    }
+}
+
+/* Исправление выхода текста за рамки */
+.card-content {
+    overflow-x: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
+    min-width: 0;
+}
+
+.film-synopsis,
+.film-quote,
+.film-details,
+.film-meta {
+    max-width: 100%;
+    word-break: break-word;
+    white-space: normal;
+}

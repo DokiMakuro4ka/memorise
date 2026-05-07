@@ -1,104 +1,173 @@
 // Управление скроллом и прогресс-баром
 class ScrollManager {
+
     constructor() {
-        this.progressBar = document.getElementById('progressBar');
-        this.randomBtn = document.getElementById('randomBtn');
+
+        this.progressBar =
+            document.getElementById('progressBar');
+
+        this.randomBtn =
+            document.getElementById('randomBtn');
+
+        this.scrollTicking = false;
+
         this.init();
     }
-    
+
     init() {
+
         this.initProgressBar();
         this.initRandomButton();
         this.initSmoothScroll();
-        this.initSwiper();
     }
-    
+
+    // =====================================================
+    // Progress bar
+    // =====================================================
+
     initProgressBar() {
+
         if (!this.progressBar) return;
-        
+
+        const updateProgress = () => {
+
+            const winScroll = window.scrollY;
+
+            const height =
+                document.documentElement.scrollHeight -
+                window.innerHeight;
+
+            const scrolled =
+                height > 0
+                    ? (winScroll / height) * 100
+                    : 0;
+
+            this.progressBar.style.width =
+                `${Math.min(scrolled, 100)}%`;
+
+            this.scrollTicking = false;
+        };
+
         window.addEventListener('scroll', () => {
-            const winScroll = document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - window.innerHeight;
-            const scrolled = (winScroll / height) * 100;
-            this.progressBar.style.width = scrolled + '%';
-        });
+
+            if (!this.scrollTicking) {
+
+                requestAnimationFrame(updateProgress);
+
+                this.scrollTicking = true;
+            }
+
+        }, { passive: true });
+
+        // initial render
+        updateProgress();
     }
-    
+
+    // =====================================================
+    // Random card button
+    // =====================================================
+
     initRandomButton() {
+
         if (!this.randomBtn) return;
-        
+
         this.randomBtn.addEventListener('click', () => {
-            const cards = document.querySelectorAll('.film-card');
-            if (cards.length === 0) return;
-            
-            const randomIndex = Math.floor(Math.random() * cards.length);
-            const randomCard = cards[randomIndex];
-            
-            // Плавный скролл к карточке
+
+            const cards =
+                document.querySelectorAll('.film-card');
+
+            if (!cards.length) return;
+
+            const randomIndex =
+                Math.floor(Math.random() * cards.length);
+
+            const randomCard =
+                cards[randomIndex];
+
+            // Плавный скролл
             randomCard.scrollIntoView({
                 behavior: 'smooth',
-                block: 'center'
+                block: 'nearest',
+                inline: 'center'
             });
-            
-            // Эффект подсветки
-            randomCard.style.transition = 'all 0.3s';
-            randomCard.style.boxShadow = '0 0 40px rgba(196,155,63,0.8)';
+
+            // Подсветка
+            randomCard.classList.add('card-highlight');
+
             setTimeout(() => {
-                randomCard.style.boxShadow = '';
+
+                randomCard.classList.remove(
+                    'card-highlight'
+                );
+
             }, 1000);
-            
+
             // Звук
-            if (window.sound) window.sound.play('click');
+            if (
+                window.sound &&
+                typeof window.sound.play === 'function'
+            ) {
+                window.sound.play('click');
+            }
         });
     }
-    
+
+    // =====================================================
+    // Smooth anchor scroll
+    // =====================================================
+
     initSmoothScroll() {
-        // Плавный скролл для всех якорей
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+
+        const anchors =
+            document.querySelectorAll('a[href^="#"]');
+
+        anchors.forEach(anchor => {
+
             anchor.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = document.querySelector(anchor.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
+
+                const href =
+                    anchor.getAttribute('href');
+
+                // Игнорируем пустые #
+                if (!href || href === '#') {
+                    return;
                 }
+
+                const target =
+                    document.querySelector(href);
+
+                if (!target) return;
+
+                e.preventDefault();
+
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
             });
         });
     }
-    
-    initSwiper() {
-        // Инициализация Swiper только на мобильных устройствах
-        if (window.innerWidth < 900 && typeof Swiper !== 'undefined') {
-            new Swiper('.swiper', {
-                slidesPerView: 1,
-                spaceBetween: 20,
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true,
-                    dynamicBullets: true
-                },
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev'
-                },
-                keyboard: {
-                    enabled: true,
-                    onlyInViewport: true
-                },
-                effect: 'slide',
-                speed: 400
-            });
-        }
+
+    // =====================================================
+    // Destroy (на будущее для SPA)
+    // =====================================================
+
+    destroy() {
+
+        // сюда можно добавить cleanup listeners
+        // если проект станет SPA
     }
 }
 
-// Инициализация
-const scrollManager = new ScrollManager();
+// =====================================================
+// Защита от двойной инициализации
+// =====================================================
 
-// Переинициализация Swiper при изменении размера окна
-let resizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        scrollManager.initSwiper();
-    }, 250);
-});
+if (
+    window.scrollManager &&
+    typeof window.scrollManager.destroy === 'function'
+) {
+    window.scrollManager.destroy();
+}
+
+window.scrollManager = new ScrollManager();
