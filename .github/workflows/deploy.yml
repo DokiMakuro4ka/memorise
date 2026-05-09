@@ -11,95 +11,60 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # =========================
-      # SSH SETUP
-      # =========================
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-
           echo "${{ secrets.VPS_SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-
           ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
 
-      # =========================
-      # SSH CHECK
-      # =========================
-      - name: Test SSH
+      - name: Quick SSH check
         run: |
-          ssh -i ~/.ssh/id_rsa \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
-            "echo VPS OK"
+          ssh -i ~/.ssh/id_rsa ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "echo VPS_OK"
 
-      # =========================
-      # CREATE RELEASE DIR
-      # =========================
-      - name: Create remote release folder
+      - name: Deploy via rsync (atomic-safe)
         run: |
-          ssh -i ~/.ssh/id_rsa \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
-            "mkdir -p /var/www/releases/$(date +%s)"
-
-      # =========================
-      # SYNC FILES (SAFE DEPLOY)
-      # =========================
-      - name: Upload to release dir
-        run: |
-          RELEASE=$(date +%s)
-
-          echo "RELEASE=$RELEASE" > release.env
-
           rsync -az --delete \
             -e "ssh -i ~/.ssh/id_rsa" \
             --exclude='.git' \
             --exclude='.github' \
+            --exclude='node_modules' \
             ./ \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/releases/$RELEASE
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/quest-deploy
 
-      # =========================
-      # ACTIVATE RELEASE (ATOMIC SWITCH)
-      # =========================
-      - name: Activate release on VPS
+      - name: Run remote deploy script (IMPORTANT)
         run: |
-          RELEASE=$(date +%s)
+          ssh -i ~/.ssh/id_rsa ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            set -e
 
-          ssh -i ~/.ssh/id_rsa \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
-            "
-            ln -sfn /var/www/releases/$RELEASE /var/www/quest
-            "
+            echo "📦 Deploy start"
 
-      # =========================
-      # VALIDATION ON VPS
-      # =========================
-      - name: Validate deployment
-        run: |
-          ssh -i ~/.ssh/id_rsa \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
-            '
-            echo "Checking MP4..."
-            test -f /var/www/quest/assets/videos/hero-bg.mp4 || exit 1
+            TARGET="/var/www/quest"
+            STAGING="/tmp/quest-deploy"
 
-            echo "Testing nginx..."
-            nginx -t || exit 1
+            echo "📁 Checking staging files..."
+            test -f "$STAGING/index.html"
 
-            echo "Reload nginx..."
-            systemctl reload nginx
+            echo "🎬 Checking hero video..."
+            test -f "$STAGING/assets/videos/hero-bg.MP4"
 
-            echo "Healthcheck..."
-            curl -f https://quest.barabulka.su || exit 1
+            echo "📂 Sync to production..."
+            sudo rsync -a --delete "$STAGING/" "$TARGET/"
 
-            echo "DEPLOY OK"
-            '
+            echo "🔧 Fix permissions..."
+            sudo chown -R www-data:www-data "$TARGET"
 
-      # =========================
-      # CLEAN OLD RELEASES
-      # =========================
-      - name: Cleanup old releases
-        run: |
-          ssh -i ~/.ssh/id_rsa \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
-            "
-            ls -1dt /var/www/releases/* | tail -n +6 | xargs rm -rf
-            "
+            echo "🧪 Nginx test..."
+            sudo nginx -t
+
+            echo "🔄 Reload nginx..."
+            sudo systemctl reload nginx
+
+            echo "🌐 Check domain resolution..."
+            dig quest.barabulka.su +short
+
+            echo "🌍 Check local curl..."
+            curl -I https://localhost --resolve quest.barabulka.su:443:127.0.0.1 || true
+
+            echo "✅ Deploy OK"
+          EOF
