@@ -565,7 +565,7 @@ if (document.readyState === 'loading') {
 }
 
 // =========================================================
-// ПРЕЛОАДЕР С ОТСЛЕЖИВАНИЕМ ИЗОБРАЖЕНИЙ И ВИДЕО
+// ПРЕЛОАДЕР С ОТСЛЕЖИВАНИЕМ КАРТОЧЕК, ИЗОБРАЖЕНИЙ И ВИДЕО
 // =========================================================
 (function() {
     const preloader = document.getElementById('preloader');
@@ -578,6 +578,7 @@ if (document.readyState === 'loading') {
     let loadedResources = 0;
     let totalResources = 0;
     let isFinished = false;
+    let cardsReady = false;
     
     // Массив дружелюбных сообщений
     const loadingMessages = [
@@ -609,7 +610,8 @@ if (document.readyState === 'loading') {
             }
             preloaderText.textContent = currentMessage;
         }
-        if (loadedResources >= totalResources && totalResources > 0) {
+        // Проверяем, всё ли загружено И карточки уже есть
+        if (loadedResources >= totalResources && totalResources > 0 && cardsReady) {
             finishLoading();
         }
     }
@@ -625,12 +627,32 @@ if (document.readyState === 'loading') {
         }, 300);
     }
     
+    // Проверка наличия карточек
+    function checkCardsReady() {
+        const cards = document.querySelectorAll('.film-card');
+        if (cards.length > 0) {
+            cardsReady = true;
+            updateProgress();
+        } else {
+            // Если карточек ещё нет, ждём через MutationObserver
+            const cardObserver = new MutationObserver(() => {
+                if (document.querySelectorAll('.film-card').length > 0) {
+                    cardsReady = true;
+                    updateProgress();
+                    cardObserver.disconnect();
+                }
+            });
+            cardObserver.observe(document.body, { childList: true, subtree: true });
+        }
+    }
+    
     function countAndObserveResources() {
         const images = document.querySelectorAll('img');
         const videos = document.querySelectorAll('video');
         totalResources = images.length + videos.length;
         if (totalResources === 0) {
-            finishLoading();
+            // Если ресурсов нет, просто ждём карточки
+            checkCardsReady();
             return;
         }
         loadedResources = 0;
@@ -653,6 +675,7 @@ if (document.readyState === 'loading') {
             }
         });
         updateProgress();
+        checkCardsReady();  // начинаем ждать карточки параллельно
     }
     
     countAndObserveResources();
@@ -678,6 +701,11 @@ if (document.readyState === 'loading') {
                     video.addEventListener('error', incrementLoad);
                 }
             });
+            updateProgress();
+        }
+        // Также проверяем появление карточек, если ещё нет
+        if (!cardsReady && document.querySelectorAll('.film-card').length > 0) {
+            cardsReady = true;
             updateProgress();
         }
     });
