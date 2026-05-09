@@ -563,8 +563,9 @@ if (document.readyState === 'loading') {
 } else {
     initNavigation();
 }
+
 // =========================================================
-// PRELOADER С ПРОГРЕССОМ ЗАГРУЗКИ
+// ПРЕЛОАДЕР С ОТСЛЕЖИВАНИЕМ ВСЕХ ИЗОБРАЖЕНИЙ (ПОСТЕРОВ)
 // =========================================================
 (function() {
     const preloader = document.getElementById('preloader');
@@ -572,41 +573,42 @@ if (document.readyState === 'loading') {
     const percentSpan = document.getElementById('preloaderPercent');
     
     if (!preloader) return;
-    
-    let loadedCount = 0;
-    let totalCount = 0;
-    
-    // Считаем все изображения на странице (включая те, что будут добавлены динамически)
-    function countAndObserveImages() {
+    window.updatePreloaderImages = function() {
+        // Принудительно пересчитываем все изображения
         const images = document.querySelectorAll('img');
-        totalCount = images.length;
-        if (totalCount === 0) {
-            finishLoading();
-            return;
+        let newTotal = images.length;
+        if (newTotal !== totalImages) {
+            totalImages = newTotal;
+            images.forEach(img => {
+                if (!img.complete && !img._listenerAdded) {
+                    img._listenerAdded = true;
+                    img.addEventListener('load', () => { loadedImages++; updateProgress(); });
+                    img.addEventListener('error', () => { loadedImages++; updateProgress(); });
+                }
+            });
+            updateProgress();
         }
-        
-        images.forEach(img => {
-            if (img.complete) {
-                incrementLoaded();
-            } else {
-                img.addEventListener('load', incrementLoaded);
-                img.addEventListener('error', incrementLoaded); // ошибка тоже считаем загруженным
-            }
-        });
-    }
+    };
     
-    function incrementLoaded() {
-        loadedCount++;
-        const percent = Math.floor((loadedCount / totalCount) * 100);
+    let loadedImages = 0;
+    let totalImages = 0;
+    let isFinished = false;
+    
+    // Функция обновления прогресса
+    function updateProgress() {
+        if (isFinished) return;
+        const percent = totalImages === 0 ? 100 : Math.floor((loadedImages / totalImages) * 100);
         if (progressBar) progressBar.style.width = `${percent}%`;
         if (percentSpan) percentSpan.textContent = `${percent}%`;
-        if (loadedCount >= totalCount) {
+        if (loadedImages >= totalImages && totalImages > 0) {
             finishLoading();
         }
     }
     
+    // Завершение загрузки
     function finishLoading() {
-        // Небольшая задержка для плавности
+        if (isFinished) return;
+        isFinished = true;
         setTimeout(() => {
             preloader.classList.add('hide');
             setTimeout(() => {
@@ -615,32 +617,83 @@ if (document.readyState === 'loading') {
         }, 300);
     }
     
-    // Начинаем отслеживание
+    // Подсчёт всех изображений на странице (включая те, что появятся позже)
+    function countAndObserveImages() {
+        const images = document.querySelectorAll('img');
+        const videos = document.querySelectorAll('video');
+        totalResources = images.length + videos.length;
+        
+        if (totalResources === 0) {
+            finishLoading();
+            return;
+        }
+        
+        loadedResources = 0; // лучше переименовать, но оставим под вашу структуру
+        loadedImages = 0;    // для совместимости с updateProgress
+        
+        // Обработка изображений
+        images.forEach(img => {
+            if (img.complete) {
+                incrementLoad();
+            } else {
+                img.addEventListener('load', incrementLoad);
+                img.addEventListener('error', incrementLoad);
+            }
+        });
+        
+        // Обработка видео
+        videos.forEach(video => {
+            // Проверяем, загружены ли уже метаданные или первый кадр
+            if (video.readyState >= 2) { // HAVE_CURRENT_DATA или больше
+                incrementLoad();
+            } else {
+                video.addEventListener('loadeddata', incrementLoad);
+                video.addEventListener('error', incrementLoad);
+            }
+        });
+        
+        function incrementLoad() {
+            loadedResources++;
+            loadedImages = loadedResources; // можно использовать одну переменную
+            updateProgress();
+        }
+        
+        updateProgress();
+    }
+    
+    // Первый подсчёт
     countAndObserveImages();
     
-    // Дополнительно следим за появлением новых изображений (например, при ленивой загрузке)
+    // Наблюдатель за новыми изображениями (например, при динамической подгрузке через ленивую загрузку)
     const observer = new MutationObserver(() => {
-        const images = document.querySelectorAll('img');
-        if (images.length !== totalCount) {
-            totalCount = images.length;
-            images.forEach(img => {
+        const currentImages = document.querySelectorAll('img');
+        if (currentImages.length !== totalImages) {
+            // Появились новые изображения – пересчитываем
+            totalImages = currentImages.length;
+            // Добавляем обработчики на новые, если они ещё не загружены
+            currentImages.forEach(img => {
                 if (!img.complete && !img._listenerAdded) {
                     img._listenerAdded = true;
-                    img.addEventListener('load', incrementLoaded);
-                    img.addEventListener('error', incrementLoaded);
+                    img.addEventListener('load', () => {
+                        loadedImages++;
+                        updateProgress();
+                    });
+                    img.addEventListener('error', () => {
+                        loadedImages++;
+                        updateProgress();
+                    });
                 }
             });
+            updateProgress();
         }
     });
     observer.observe(document.body, { childList: true, subtree: true });
     
-    // Запасной таймер на случай, если что-то пойдёт не так (через 5 секунд принудительно скрываем)
+    // Запасной таймер (5 секунд) – на случай, если что-то сломалось
     setTimeout(() => {
-        if (preloader && !preloader.classList.contains('hide')) {
-            preloader.classList.add('hide');
-            setTimeout(() => {
-                if (preloader && preloader.parentNode) preloader.remove();
-            }, 500);
+        if (!isFinished && preloader && !preloader.classList.contains('hide')) {
+            console.warn('Прелоадер принудительно скрыт по таймауту');
+            finishLoading();
         }
-    }, 5000);
+    }, 800000);
 })();

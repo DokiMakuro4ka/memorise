@@ -18,38 +18,73 @@ class Gallery {
     }
     
     render() {
-        this.container.innerHTML = this.memories.map(memory => `
+        this.container.innerHTML = this.memories.map((memory, index) => `
             <div class="swiper-slide">
                 <div class="film-card" data-id="${memory.id}">
                     <div class="card-sticky">
                         <div class="card-media">
                             <div class="film-poster" data-id="${memory.id}">
-                                <img data-src="${memory.image}" alt="${memory.title}" class="lazy-image">
+                                <img 
+                                    src="${index === 0 ? memory.image : 'placeholder.webp'}"
+                                    data-src="${memory.image}"
+                                    alt="${memory.title}"
+                                    ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}
+                                    class="lazy-image"
+                                >
+
                                 <div class="film-rating">${memory.rating}</div>
-                                <div class="view-counter" data-id="${memory.id}">👁️ ${memory.views}</div>
+                                <div class="view-counter" data-id="${memory.id}">
+                                    👁️ ${memory.views}
+                                </div>
                             </div>
                         </div>
+
                         <div class="card-content">
                             <div class="film-meta">
                                 <span class="film-year">${memory.year}</span>
-                                <span class="film-director">КВЕСТ: ${memory.director}</span>
+                                <span class="film-director">
+                                    КВЕСТ: ${memory.director}
+                                </span>
                             </div>
+
                             <h2 class="film-title">«${memory.title}»</h2>
+
                             <div class="film-details">
-                                <div class="detail-item">⏱️ ${memory.duration}</div>
-                                <div class="detail-item">🏆 ${memory.achievement}</div>
+                                <div class="detail-item">
+                                    ⏱️ ${memory.duration}
+                                </div>
+
+                                <div class="detail-item">
+                                    🏆 ${memory.achievement}
+                                </div>
                             </div>
-                            <p class="film-synopsis">${memory.synopsis}</p>
-                            <div class="film-quote">«${memory.quote}»</div>
+
+                            <p class="film-synopsis">
+                                ${memory.synopsis}
+                            </p>
+
+                            <div class="film-quote">
+                                «${memory.quote}»
+                            </div>
+
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <button class="watch-trailer" data-id="${memory.id}">📸 Смотреть фото →</button>
-                                <button class="like-btn" data-id="${memory.id}">❤️ <span class="likes-count">${memory.likes || 0}</span></button>
+                                <button class="watch-trailer" data-id="${memory.id}">
+                                    📸 Смотреть фото →
+                                </button>
+
+                                <button class="like-btn" data-id="${memory.id}">
+                                    ❤️ 
+                                    <span class="likes-count">
+                                        ${memory.likes || 0}
+                                    </span>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         `).join('');
+        
         
         // Инициализация лайков (сохраняем в localStorage)
         document.querySelectorAll('.like-btn').forEach(btn => {
