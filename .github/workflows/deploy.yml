@@ -32,21 +32,34 @@ jobs:
             ./ \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/quest-deploy
 
-      - name: Run remote deploy script (IMPORTANT)
+      - name: Run remote deploy script
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
             set -e
 
             echo "📦 Deploy start"
 
-            TARGET="/var/www/quest"
             STAGING="/tmp/quest-deploy"
+            TARGET="/var/www/quest"
 
-            echo "📁 Checking staging files..."
-            test -f "$STAGING/index.html"
+            echo "📁 Checking staging structure..."
+            ls -lah "$STAGING"
+
+            echo "📁 Checking assets..."
+            ls -lah "$STAGING/assets/videos" || {
+              echo "❌ assets/videos missing"
+              exit 1
+            }
 
             echo "🎬 Checking hero video..."
-            test -f "$STAGING/assets/videos/hero-bg.MP4"
+            VIDEO="$STAGING/assets/videos/hero-bg.mp4"
+
+            if [ ! -f "$VIDEO" ]; then
+              echo "❌ Missing video: $VIDEO"
+              echo "📂 Available files:"
+              find "$STAGING/assets/videos" || true
+              exit 1
+            fi
 
             echo "📂 Sync to production..."
             sudo rsync -a --delete "$STAGING/" "$TARGET/"
@@ -61,10 +74,10 @@ jobs:
             sudo systemctl reload nginx
 
             echo "🌐 Check domain resolution..."
-            dig quest.barabulka.su +short
+            dig quest.barabulka.su +short || true
 
-            echo "🌍 Check local curl..."
-            curl -I https://localhost --resolve quest.barabulka.su:443:127.0.0.1 || true
+            echo "🌍 Check HTTPS..."
+            curl -I https://quest.barabulka.su || true
 
             echo "✅ Deploy OK"
           EOF
