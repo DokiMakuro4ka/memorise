@@ -58,6 +58,7 @@
 /* Контент карточки — всегда горизонтальная компоновка */
 .card-sticky {
     display: grid;
+    justify-content: center;
     grid-template-columns: minmax(180px, 350px) 1fr;
     gap: 2rem;
     width: 95vw;
@@ -566,4 +567,144 @@
     .modal-content img {
         max-height: 45vh;
     }
+}
+/* =========================================================
+   НАВИГАЦИЯ (СТРЕЛКИ И ИНДИКАТОР)
+========================================================= */
+.nav-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    margin-bottom: 20px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 100;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    padding: 8px 16px;
+    border-radius: 60px;
+    border: 1px solid rgba(196,155,63,0.3);
+}
+
+.nav-arrow {
+    background: rgba(196,155,63,0.2);
+    border: 1px solid rgba(196,155,63,0.5);
+    color: #c49b3f;
+    font-size: 1.5rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+}
+
+.nav-arrow:hover {
+    background: rgba(196,155,63,0.5);
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.nav-dots {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.nav-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #555;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.nav-dot.active {
+    background: #c49b3f;
+    width: 12px;
+    height: 12px;
+    box-shadow: 0 0 8px #c49b3f;
+}
+
+/* подсказка */
+.swipe-hint-mobile {
+    display: none;
+    text-align: center;
+    font-size: 0.7rem;
+    color: #aaa;
+    margin: 1rem auto 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .nav-controls {
+        padding: 5px 12px;
+        gap: 12px;
+        bottom: 12px;
+    }
+    .nav-arrow {
+        width: 36px;
+        height: 36px;
+        font-size: 1.2rem;
+    }
+    .nav-dot {
+        width: 6px;
+        height: 6px;
+    }
+    .nav-dot.active {
+        width: 10px;
+        height: 10px;
+    }
+    .swipe-hint-mobile {
+        display: block;
+    }
+}
+/* =========================================================
+   PRELOADER (СТРАНИЦА ЗАГРУЗКИ)
+========================================================= */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0a0a0a;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.preloader.hide {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.preloader-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(196,155,63,0.2);
+    border-top: 4px solid #c49b3f;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.preloader-text {
+    color: #c49b3f;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
 }

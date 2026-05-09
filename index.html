@@ -24,6 +24,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 <body>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-spinner"></div>
+        <div class="preloader-text">Загрузка воспоминаний...</div>
+    </div>
 
 <canvas id="particlesCanvas" class="particles-canvas"></canvas>
 
@@ -61,6 +66,12 @@
     </section>
 
     <div class="horizontal-scroll" id="horizontalScroll">
+        <!-- Навигация по квестам -->
+        <div class="nav-controls">
+            <button class="nav-arrow prev" id="navPrev" aria-label="Предыдущий квест">←</button>
+            <div class="nav-dots" id="navDots"></div>
+            <button class="nav-arrow next" id="navNext" aria-label="Следующий квест">→</button>
+        </div>
         <div class="horizontal-track" id="memoriesContainer">
             <!-- КВЕСТ 1: Lucky Hotel. Люкс 113 -->
             <div class="film-card" data-id="1">
@@ -80,13 +91,9 @@
                             <div class="detail-item">📅 08.01.26 13:00</div>
                             <div class="detail-item">💰 11 000 ₽</div>
                             <div class="detail-item">👥 Алёна, Даша, Илья, Рита, Даня</div>
-                        </div>
+                        </div>  
                         <p class="film-synopsis">
-                            Проклятый отель не отпускает. Эльза возвращается под чужим именем, чтобы заселиться в люкс 113. 
-                            Мы — её команда. В коридорах — шёпот, в зеркалах — лица из прошлого. 
-                            Алёна нашла дневник горничной, Даша расшифровала старые регистрационные карты, 
-                            Илья услышал шаги Томми... А Рита и Даня остановили время, когда тьма уже настигала. 
-                            Отель показал нам воспоминания, которые нельзя изменить — но можно использовать, чтобы выбраться.
+                            Проклятый отель не отпускает. Эльза возвращается под чужим именем, чтобы заселиться в люкс 113. Мы — её команда. В коридорах — шёпот, в зеркалах — лица из прошлого. Алёна нашла дневник горничной, Даша расшифровала старые регистрационные карты, Илья услышал шаги Томми... А Рита и Даня остановили время, когда тьма уже настигала. Отель показал нам воспоминания, которые нельзя изменить — но можно использовать, чтобы выбраться.
                         </p>
                         <div class="film-quote">
                             «Если вас поглотила тьма, значит, Томми рядом... Но мы были громче его шёпота.»

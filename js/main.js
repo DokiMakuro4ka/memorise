@@ -260,7 +260,7 @@ function showWelcomeMessage() {
                     <strong>Добро пожаловать в наш кинозал!</strong><br>
 
                     <small>
-                        Листайте вниз, а над карточками крутите колёсико вбок
+                        Листайте вниз, а над карточками крутите колёсико мыши, чтобы погрузиться в атмосферу воспоминаний.
                     </small>
                 </div>
             </div>
@@ -310,9 +310,9 @@ function showWelcomeMessage() {
 
         setTimeout(() => {
             toast.remove();
-        }, 4000);
+        }, 6000);
 
-    }, 1000);
+    }, 500);
 }
 
 function animateCounter(element, newValue) {
@@ -500,3 +500,84 @@ window.addEventListener('error', (e) => {
     }
 
 }, true);
+
+// === НАВИГАЦИЯ ===
+function initNavigation() {
+    const scrollContainer = document.getElementById('horizontalScroll');
+    const prevBtn = document.getElementById('navPrev');
+    const nextBtn = document.getElementById('navNext');
+    const dotsContainer = document.getElementById('navDots');
+    if (!scrollContainer || !prevBtn || !nextBtn || !dotsContainer) return;
+
+    const cards = document.querySelectorAll('.film-card');
+    const cardCount = cards.length;
+    if (cardCount === 0) return;
+
+    // создаём точки
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < cardCount; i++) {
+        const dot = document.createElement('div');
+        dot.classList.add('nav-dot');
+        dot.dataset.index = i;
+        dot.addEventListener('click', () => goToCard(i));
+        dotsContainer.appendChild(dot);
+    }
+    const dots = document.querySelectorAll('.nav-dot');
+
+    function goToCard(index) {
+        index = Math.max(0, Math.min(index, cardCount - 1));
+        const cardWidth = scrollContainer.clientWidth;
+        scrollContainer.scrollTo({ left: index * cardWidth, behavior: 'smooth' });
+    }
+
+    function updateActiveDot() {
+        const scrollLeft = scrollContainer.scrollLeft;
+        const cardWidth = scrollContainer.clientWidth;
+        let activeIndex = Math.round(scrollLeft / cardWidth);
+        activeIndex = Math.min(activeIndex, cardCount - 1);
+        dots.forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === activeIndex);
+        });
+    }
+
+    prevBtn.addEventListener('click', () => {
+        const scrollLeft = scrollContainer.scrollLeft;
+        const cardWidth = scrollContainer.clientWidth;
+        const currentIndex = Math.round(scrollLeft / cardWidth);
+        goToCard(currentIndex - 1);
+    });
+    nextBtn.addEventListener('click', () => {
+        const scrollLeft = scrollContainer.scrollLeft;
+        const cardWidth = scrollContainer.clientWidth;
+        const currentIndex = Math.round(scrollLeft / cardWidth);
+        goToCard(currentIndex + 1);
+    });
+    scrollContainer.addEventListener('scroll', () => requestAnimationFrame(updateActiveDot));
+    window.addEventListener('resize', updateActiveDot);
+    updateActiveDot();
+}
+
+// вызываем после загрузки DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initNavigation);
+} else {
+    initNavigation();
+}
+// === СКРЫТИЕ ПРЕЛОАДЕРА ПОСЛЕ ПОЛНОЙ ЗАГРУЗКИ ===
+function hidePreloader() {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        preloader.classList.add('hide');
+        // Удаляем из DOM после анимации, чтобы не мешал
+        setTimeout(() => {
+            preloader.remove();
+        }, 500);
+    }
+}
+
+// Если все ресурсы уже загружены
+if (document.readyState === 'complete') {
+    hidePreloader();
+} else {
+    window.addEventListener('load', hidePreloader);
+}
