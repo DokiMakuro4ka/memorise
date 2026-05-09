@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # =========================
+      # SSH SETUP
+      # =========================
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -20,17 +23,83 @@ jobs:
 
           ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
 
+      # =========================
+      # SSH CHECK
+      # =========================
       - name: Test SSH
         run: |
           ssh -i ~/.ssh/id_rsa \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
             "echo VPS OK"
 
-      - name: Deploy files
+      # =========================
+      # CREATE RELEASE DIR
+      # =========================
+      - name: Create remote release folder
         run: |
-          rsync -avz --delete \
+          ssh -i ~/.ssh/id_rsa \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "mkdir -p /var/www/releases/$(date +%s)"
+
+      # =========================
+      # SYNC FILES (SAFE DEPLOY)
+      # =========================
+      - name: Upload to release dir
+        run: |
+          RELEASE=$(date +%s)
+
+          echo "RELEASE=$RELEASE" > release.env
+
+          rsync -az --delete \
             -e "ssh -i ~/.ssh/id_rsa" \
             --exclude='.git' \
             --exclude='.github' \
             ./ \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/Quest-memories
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/releases/$RELEASE
+
+      # =========================
+      # ACTIVATE RELEASE (ATOMIC SWITCH)
+      # =========================
+      - name: Activate release on VPS
+        run: |
+          RELEASE=$(date +%s)
+
+          ssh -i ~/.ssh/id_rsa \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "
+            ln -sfn /var/www/releases/$RELEASE /var/www/quest
+            "
+
+      # =========================
+      # VALIDATION ON VPS
+      # =========================
+      - name: Validate deployment
+        run: |
+          ssh -i ~/.ssh/id_rsa \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            '
+            echo "Checking MP4..."
+            test -f /var/www/quest/assets/videos/hero-bg.mp4 || exit 1
+
+            echo "Testing nginx..."
+            nginx -t || exit 1
+
+            echo "Reload nginx..."
+            systemctl reload nginx
+
+            echo "Healthcheck..."
+            curl -f https://quest.barabulka.su || exit 1
+
+            echo "DEPLOY OK"
+            '
+
+      # =========================
+      # CLEAN OLD RELEASES
+      # =========================
+      - name: Cleanup old releases
+        run: |
+          ssh -i ~/.ssh/id_rsa \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "
+            ls -1dt /var/www/releases/* | tail -n +6 | xargs rm -rf
+            "
