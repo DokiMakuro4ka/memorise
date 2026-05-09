@@ -695,5 +695,5 @@ if (document.readyState === 'loading') {
             console.warn('Прелоадер принудительно скрыт по таймауту');
             finishLoading();
         }
-    }, 800000);
+    }, 20000);
 })();
