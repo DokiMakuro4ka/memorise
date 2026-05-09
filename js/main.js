@@ -627,16 +627,16 @@ if (document.readyState === 'loading') {
         }, 300);
     }
     
-    // Проверка наличия карточек
+    // Проверка наличия карточек (и их содержимого)
     function checkCardsReady() {
-        const cards = document.querySelectorAll('.film-card');
+        const cards = document.querySelectorAll('.film-card, .card-sticky'); // ждём появления любых из этих классов
         if (cards.length > 0) {
             cardsReady = true;
             updateProgress();
         } else {
             // Если карточек ещё нет, ждём через MutationObserver
             const cardObserver = new MutationObserver(() => {
-                if (document.querySelectorAll('.film-card').length > 0) {
+                if (document.querySelectorAll('.film-card, .card-sticky').length > 0) {
                     cardsReady = true;
                     updateProgress();
                     cardObserver.disconnect();
@@ -704,7 +704,7 @@ if (document.readyState === 'loading') {
             updateProgress();
         }
         // Также проверяем появление карточек, если ещё нет
-        if (!cardsReady && document.querySelectorAll('.film-card').length > 0) {
+        if (!cardsReady && document.querySelectorAll('.film-card, .card-sticky').length > 0) {
             cardsReady = true;
             updateProgress();
         }
