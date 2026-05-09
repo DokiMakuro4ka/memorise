@@ -25,9 +25,15 @@
 </head>
 <body>
     <!-- Preloader -->
-    <div class="preloader" id="preloader">
-        <div class="preloader-spinner"></div>
-        <div class="preloader-text">Загрузка воспоминаний...</div>
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-spinner"></div>
+            <div class="preloader-progress-container">
+                <div class="preloader-progress-bar" id="preloaderProgressBar"></div>
+            </div>
+            <p class="preloader-text">Загрузка воспоминаний...</p>
+            <p class="preloader-percent" id="preloaderPercent">0%</p>
+        </div>
     </div>
 
 <canvas id="particlesCanvas" class="particles-canvas"></canvas>

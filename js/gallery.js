@@ -8,6 +8,10 @@ class Gallery {
     init() {
         if (!this.container) return;
         this.render();
+        // После рендера пересчитываем изображения для прелоадера
+        if (window.recalcPreloader) {
+            setTimeout(() => window.recalcPreloader(), 100);
+        }
         this.initLazyLoading();
         this.initParallax();
         this.initViewButtons();
