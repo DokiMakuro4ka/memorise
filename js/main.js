@@ -565,47 +565,55 @@ if (document.readyState === 'loading') {
 }
 
 // =========================================================
-// ПРЕЛОАДЕР С ОТСЛЕЖИВАНИЕМ ВСЕХ ИЗОБРАЖЕНИЙ (ПОСТЕРОВ)
+// ПРЕЛОАДЕР С ОТСЛЕЖИВАНИЕМ ИЗОБРАЖЕНИЙ И ВИДЕО
 // =========================================================
 (function() {
     const preloader = document.getElementById('preloader');
     const progressBar = document.getElementById('preloaderProgressBar');
     const percentSpan = document.getElementById('preloaderPercent');
+    const preloaderText = document.querySelector('#preloader .preloader-text');
     
     if (!preloader) return;
-    window.updatePreloaderImages = function() {
-        // Принудительно пересчитываем все изображения
-        const images = document.querySelectorAll('img');
-        let newTotal = images.length;
-        if (newTotal !== totalImages) {
-            totalImages = newTotal;
-            images.forEach(img => {
-                if (!img.complete && !img._listenerAdded) {
-                    img._listenerAdded = true;
-                    img.addEventListener('load', () => { loadedImages++; updateProgress(); });
-                    img.addEventListener('error', () => { loadedImages++; updateProgress(); });
-                }
-            });
-            updateProgress();
-        }
-    };
     
-    let loadedImages = 0;
-    let totalImages = 0;
+    let loadedResources = 0;
+    let totalResources = 0;
     let isFinished = false;
     
-    // Функция обновления прогресса
+    // Массив дружелюбных сообщений
+    const loadingMessages = [
+        { percent: 0, text: "🎬 Подготавливаем кадры..." },
+        { percent: 25, text: "🍿 Достаём попкорн, воспоминания загружаются..." },
+        { percent: 50, text: "📽️ Наматываем киноплёнку..." },
+        { percent: 75, text: "✨ Почти готово, осталось чуть-чуть!" },
+        { percent: 90, text: "🎞️ Финальный штрих..." },
+        { percent: 100, text: "🎉 Добро пожаловать в наш кинозал!" }
+    ];
+    
+    function incrementLoad() {
+        loadedResources++;
+        updateProgress();
+    }
+    
     function updateProgress() {
         if (isFinished) return;
-        const percent = totalImages === 0 ? 100 : Math.floor((loadedImages / totalImages) * 100);
+        const percent = totalResources === 0 ? 100 : Math.floor((loadedResources / totalResources) * 100);
         if (progressBar) progressBar.style.width = `${percent}%`;
         if (percentSpan) percentSpan.textContent = `${percent}%`;
-        if (loadedImages >= totalImages && totalImages > 0) {
+        if (preloaderText) {
+            let currentMessage = loadingMessages[0].text;
+            for (let i = loadingMessages.length - 1; i >= 0; i--) {
+                if (percent >= loadingMessages[i].percent) {
+                    currentMessage = loadingMessages[i].text;
+                    break;
+                }
+            }
+            preloaderText.textContent = currentMessage;
+        }
+        if (loadedResources >= totalResources && totalResources > 0) {
             finishLoading();
         }
     }
     
-    // Завершение загрузки
     function finishLoading() {
         if (isFinished) return;
         isFinished = true;
@@ -617,21 +625,16 @@ if (document.readyState === 'loading') {
         }, 300);
     }
     
-    // Подсчёт всех изображений на странице (включая те, что появятся позже)
-    function countAndObserveImages() {
+    function countAndObserveResources() {
         const images = document.querySelectorAll('img');
         const videos = document.querySelectorAll('video');
         totalResources = images.length + videos.length;
-        
         if (totalResources === 0) {
             finishLoading();
             return;
         }
+        loadedResources = 0;
         
-        loadedResources = 0; // лучше переименовать, но оставим под вашу структуру
-        loadedImages = 0;    // для совместимости с updateProgress
-        
-        // Обработка изображений
         images.forEach(img => {
             if (img.complete) {
                 incrementLoad();
@@ -641,47 +644,38 @@ if (document.readyState === 'loading') {
             }
         });
         
-        // Обработка видео
         videos.forEach(video => {
-            // Проверяем, загружены ли уже метаданные или первый кадр
-            if (video.readyState >= 2) { // HAVE_CURRENT_DATA или больше
+            if (video.readyState >= 2) {
                 incrementLoad();
             } else {
                 video.addEventListener('loadeddata', incrementLoad);
                 video.addEventListener('error', incrementLoad);
             }
         });
-        
-        function incrementLoad() {
-            loadedResources++;
-            loadedImages = loadedResources; // можно использовать одну переменную
-            updateProgress();
-        }
-        
         updateProgress();
     }
     
-    // Первый подсчёт
-    countAndObserveImages();
+    countAndObserveResources();
     
-    // Наблюдатель за новыми изображениями (например, при динамической подгрузке через ленивую загрузку)
+    // Наблюдатель за динамически добавляемыми ресурсами
     const observer = new MutationObserver(() => {
         const currentImages = document.querySelectorAll('img');
-        if (currentImages.length !== totalImages) {
-            // Появились новые изображения – пересчитываем
-            totalImages = currentImages.length;
-            // Добавляем обработчики на новые, если они ещё не загружены
+        const currentVideos = document.querySelectorAll('video');
+        const newTotal = currentImages.length + currentVideos.length;
+        if (newTotal !== totalResources) {
+            totalResources = newTotal;
             currentImages.forEach(img => {
                 if (!img.complete && !img._listenerAdded) {
                     img._listenerAdded = true;
-                    img.addEventListener('load', () => {
-                        loadedImages++;
-                        updateProgress();
-                    });
-                    img.addEventListener('error', () => {
-                        loadedImages++;
-                        updateProgress();
-                    });
+                    img.addEventListener('load', incrementLoad);
+                    img.addEventListener('error', incrementLoad);
+                }
+            });
+            currentVideos.forEach(video => {
+                if (video.readyState < 2 && !video._listenerAdded) {
+                    video._listenerAdded = true;
+                    video.addEventListener('loadeddata', incrementLoad);
+                    video.addEventListener('error', incrementLoad);
                 }
             });
             updateProgress();
@@ -689,11 +683,11 @@ if (document.readyState === 'loading') {
     });
     observer.observe(document.body, { childList: true, subtree: true });
     
-    // Запасной таймер (5 секунд) – на случай, если что-то сломалось
+    // Защитный таймаут (10 секунд)
     setTimeout(() => {
         if (!isFinished && preloader && !preloader.classList.contains('hide')) {
             console.warn('Прелоадер принудительно скрыт по таймауту');
             finishLoading();
         }
-    }, 20000);
+    }, 10000);
 })();
