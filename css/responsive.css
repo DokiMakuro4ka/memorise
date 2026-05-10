@@ -21,6 +21,25 @@
     .cinema-footer {
         padding: 1rem;
     }
+    /* Дополнительные фиксы для планшетов и телефонов */
+    .film-card,
+    .card-sticky,
+    .film-poster {
+        position: relative;
+        z-index: 0;
+        will-change: transform;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+    .film-poster img {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+    .card-content {
+        width: 100%;
+        overflow-x: hidden;
+        word-break: break-word;
+    }
 }
 
 @media (max-width: 600px) {
@@ -36,5 +55,34 @@
     .hero-scroll-hint {
         font-size: 0.7rem;
         bottom: 1rem;
+    }
+    /* Фиксы для маленьких телефонов (iPhone SE, Android) */
+    .film-card {
+        padding: 0.5rem;
+    }
+    .card-sticky {
+        padding: 1rem !important;
+        gap: 1rem !important;
+    }
+    .film-poster {
+        max-width: 240px !important;
+    }
+    .card-content {
+        padding: 0 0.25rem;
+    }
+    .film-title {
+        font-size: 1.2rem;
+    }
+    .film-synopsis, .film-quote {
+        font-size: 0.75rem;
+        line-height: 1.4;
+    }
+    .detail-item {
+        font-size: 0.7rem;
+        white-space: normal;
+    }
+    .watch-trailer, .like-btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
     }
 }
