@@ -513,7 +513,7 @@ function initNavigation() {
     const cardCount = cards.length;
     if (cardCount === 0) return;
 
-    // создаём точки
+    // Создание точек
     dotsContainer.innerHTML = '';
     for (let i = 0; i < cardCount; i++) {
         const dot = document.createElement('div');
@@ -538,19 +538,30 @@ function initNavigation() {
         dots.forEach((dot, idx) => {
             dot.classList.toggle('active', idx === activeIndex);
         });
+        // Отключаем кнопки на краях
+        if (activeIndex === 0) {
+            prevBtn.setAttribute('disabled', 'disabled');
+        } else {
+            prevBtn.removeAttribute('disabled');
+        }
+        if (activeIndex === cardCount - 1) {
+            nextBtn.setAttribute('disabled', 'disabled');
+        } else {
+            nextBtn.removeAttribute('disabled');
+        }
     }
 
     prevBtn.addEventListener('click', () => {
         const scrollLeft = scrollContainer.scrollLeft;
         const cardWidth = scrollContainer.clientWidth;
         const currentIndex = Math.round(scrollLeft / cardWidth);
-        goToCard(currentIndex - 1);
+        if (currentIndex > 0) goToCard(currentIndex - 1);
     });
     nextBtn.addEventListener('click', () => {
         const scrollLeft = scrollContainer.scrollLeft;
         const cardWidth = scrollContainer.clientWidth;
         const currentIndex = Math.round(scrollLeft / cardWidth);
-        goToCard(currentIndex + 1);
+        if (currentIndex < cardCount - 1) goToCard(currentIndex + 1);
     });
     scrollContainer.addEventListener('scroll', () => requestAnimationFrame(updateActiveDot));
     window.addEventListener('resize', updateActiveDot);
