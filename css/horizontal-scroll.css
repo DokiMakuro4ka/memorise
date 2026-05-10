@@ -746,3 +746,21 @@
         height: 45px;
     }
 }
+
+/* =========================================================
+   ФИКСЫ ДЛЯ IOS (iPhone, iPad)
+========================================================= */
+.film-card,
+.card-sticky,
+.film-poster {
+    position: relative;
+    z-index: 0;
+    will-change: transform;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+.film-poster img {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
