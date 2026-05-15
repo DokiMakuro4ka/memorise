@@ -22,12 +22,14 @@ body {
     font-family: 'Inter', sans-serif;
     color: #e0e0e0;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     position: relative;
 }
 
 img {
     max-width: 100%;
+    height: auto;
     display: block;
 }
 
@@ -43,6 +45,7 @@ img {
     background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjYiIG51bU9jdGF2ZXM9IjMiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjZikiIG9wYWNpdHk9IjAuNCIvPjwvc3ZnPg==');
     background-repeat: repeat;
     animation: grain 8s steps(10) infinite;
+    will-change: transform;
 }
 
 .vignette {
@@ -65,8 +68,9 @@ img {
     height: 4px;
     background: linear-gradient(90deg, #c49b3f, #e8b86b);
     z-index: 1000;
-    transition: width 0.1s ease;
+    transition: width 0.2s ease;
     box-shadow: 0 0 10px rgba(196,155,63,0.5);
+    will-change: width;
 }
 
 .progress-bar::after {
@@ -76,7 +80,13 @@ img {
     top: -2px;
     width: 20px;
     height: 8px;
-    background: repeating-linear-gradient(90deg, #c49b3f, #c49b3f 3px, transparent 3px, transparent 6px);
+    background: repeating-linear-gradient(
+        90deg,
+        #c49b3f,
+        #c49b3f 3px,
+        transparent 3px,
+        transparent 6px
+    );
 }
 
 /* Кнопки */
@@ -94,13 +104,15 @@ img {
     font-size: 1.8rem;
     cursor: pointer;
     z-index: 1000;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     box-shadow: 0 0 20px rgba(196,155,63,0.3);
+    will-change: transform;
 }
 
 @supports (backdrop-filter: blur(10px)) {
     .random-btn, .sound-toggle {
         backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
     }
 }
 
@@ -172,9 +184,9 @@ img {
     font-size: clamp(3rem, 10vw, 7rem);
     font-weight: 900;
     background: linear-gradient(135deg, #fff 0%, #c49b3f 100%);
-    background-clip: text;
     -webkit-background-clip: text;
-    color: transparent;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     margin: 1rem 0;
 }
 
