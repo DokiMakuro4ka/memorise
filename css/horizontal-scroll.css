@@ -1,5 +1,6 @@
 /* Горизонтальный скролл */
 .horizontal-scroll {
+    position: relative;
     flex: 1;
     min-height: 0;
     overflow-x: auto;
@@ -51,8 +52,10 @@
     z-index: -1;
 }
 
-.film-card:hover::before {
-    opacity: 0.6;
+@media (hover: hover) and (pointer: fine) {
+    .film-card:hover::before {
+        opacity: 0.6;
+    }
 }
 
 /* Контент карточки — всегда горизонтальная компоновка */
@@ -66,7 +69,7 @@
     margin: 0 auto;
     padding: 2rem;
     border-radius: 32px;
-    background: rgba(20,20,20,0.6);
+    background: rgba(20,20,20,0.2);
     border: 1px solid rgba(255,255,255,0.05);
     transition: transform 0.3s ease, border-color 0.3s ease;
 }
@@ -76,9 +79,9 @@
     min-width: 0;
 }
 
-@supports (backdrop-filter: blur(8px)) {
+@supports (backdrop-filter: blur(3px)) {
     .card-sticky {
-        backdrop-filter: blur(8px);
+        backdrop-filter: blur(3px);
     }
 }
 
@@ -92,7 +95,7 @@
     max-width: 100%;
     margin: 0;
     cursor: pointer;
-    margin-bottom: 20px
+    margin-bottom: 10px
 }
 
 .film-poster img {
@@ -132,6 +135,7 @@
 .film-meta {
     display: flex;
     gap: 1rem;
+    margin-top: 10px;
     margin-bottom: 1rem;
     font-size: 0.8rem;
     color: #aaa;
@@ -410,7 +414,6 @@
     text-align: left;
     line-height: 1.6;
     margin-bottom: 1.25rem;
-    max-width: 65ch;
     hyphens: auto;
 }
 
@@ -568,69 +571,6 @@
         max-height: 45vh;
     }
 }
-/* =========================================================
-   НАВИГАЦИЯ (СТРЕЛКИ И ИНДИКАТОР)
-========================================================= */
-.nav-controls {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    margin-bottom: 20px;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    z-index: 100;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(8px);
-    padding: 8px 16px;
-    border-radius: 60px;
-    border: 1px solid rgba(196,155,63,0.3);
-}
-
-.nav-arrow {
-    background: rgba(196,155,63,0.2);
-    border: 1px solid rgba(196,155,63,0.5);
-    color: #c49b3f;
-    font-size: 1.5rem;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    touch-action: manipulation;
-}
-
-.nav-arrow:hover {
-    background: rgba(196,155,63,0.5);
-    color: #fff;
-    transform: scale(1.05);
-}
-
-.nav-dots {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-.nav-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #555;
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.nav-dot.active {
-    background: #c49b3f;
-    width: 12px;
-    height: 12px;
-    box-shadow: 0 0 8px #c49b3f;
-}
 
 /* подсказка */
 .swipe-hint-mobile {
@@ -642,24 +582,6 @@
 }
 
 @media (max-width: 768px) {
-    .nav-controls {
-        padding: 5px 12px;
-        gap: 12px;
-        bottom: 12px;
-    }
-    .nav-arrow {
-        width: 36px;
-        height: 36px;
-        font-size: 1.2rem;
-    }
-    .nav-dot {
-        width: 6px;
-        height: 6px;
-    }
-    .nav-dot.active {
-        width: 10px;
-        height: 10px;
-    }
     .swipe-hint-mobile {
         display: block;
     }
@@ -754,7 +676,7 @@
 .card-sticky,
 .film-poster {
     position: relative;
-    z-index: 0;
+    z-index: 100;
     will-change: transform;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
@@ -765,6 +687,120 @@
     transform: translateZ(0);
 }
 
-.nav-arrow:disabled {
-    display: none;
+.card-sticky {
+    position: relative;
+}
+
+/* Нижняя панель */
+.card-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 24px;
+    padding-top: 18px;
+
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Кнопки */
+.card-arrow {
+    padding: 12px 22px;
+
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(10px);
+
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.card-arrow:hover {
+    transform: translateY(-2px);
+    background: rgba(196,155,63,0.15);
+    border-color: rgba(196,155,63,0.45);
+}
+
+/* Нажатие */
+.card-arrow:active {
+    transform: scale(0.96);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .card-nav {
+        gap: 10px;
+    }
+
+    .card-arrow {
+        flex: 1;
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+}
+
+.cards-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
+    max-width: 1400px;
+
+    margin: 30px auto 0;
+    padding: 0 20px;
+}
+
+.card-arrow {
+    padding: 14px 26px;
+
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.25s ease,
+        background 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.card-arrow:hover {
+    transform: translateY(-2px);
+    background: rgba(196,155,63,0.14);
+    border-color: rgba(196,155,63,0.45);
+}
+
+.card-arrow:active {
+    transform: scale(0.96);
+}
+
+@media (max-width: 768px) {
+    .cards-navigation {
+        gap: 12px;
+    }
+
+    .card-arrow {
+        flex: 1;
+        padding: 12px;
+        font-size: 0.9rem;
+    }
 }

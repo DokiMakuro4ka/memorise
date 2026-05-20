@@ -225,8 +225,8 @@ function initParticles() {
 function preloadCriticalResources() {
 
     const criticalImages = [
-        'https://picsum.photos/id/104/800/1000',
-        'https://picsum.photos/id/106/800/1000'
+        'assets/images/lucky-hotel-poster.jpeg',
+        'assets/images/lucky-hotel-2.jpg'
     ];
 
     criticalImages.forEach(src => {
@@ -361,17 +361,11 @@ function animateCounter(element, newValue) {
 
 function showSimpleModal(imgSrc) {
 
-    const existing =
-        document.getElementById('temp-modal');
-
-    if (existing) {
-        existing.remove();
-    }
+    const existing = document.getElementById('temp-modal');
+    if (existing) existing.remove();
 
     const modal = document.createElement('div');
-
     modal.id = 'temp-modal';
-
     modal.style.cssText = `
         position: fixed;
         inset: 0;
@@ -387,7 +381,7 @@ function showSimpleModal(imgSrc) {
     const img = document.createElement('img');
 
     img.onerror = () => {
-        img.src = 'https://picsum.photos/id/1/800/1000';
+        img.src = 'assets/images/hero-poster.jpg';
     };
 
     img.src = imgSrc;
@@ -395,8 +389,7 @@ function showSimpleModal(imgSrc) {
     img.style.maxWidth = '90%';
     img.style.maxHeight = '90%';
     img.style.borderRadius = '16px';
-    img.style.boxShadow =
-        '0 0 30px rgba(196,155,63,0.5)';
+    img.style.boxShadow = '0 0 30px rgba(196,155,63,0.5)';
 
     modal.appendChild(img);
 
@@ -408,10 +401,7 @@ function showSimpleModal(imgSrc) {
     modal.addEventListener('click', closeModal);
 
     const escHandler = (e) => {
-
-        if (e.key === 'Escape') {
-            closeModal();
-        }
+        if (e.key === 'Escape') closeModal();
     };
 
     document.addEventListener('keydown', escHandler);
@@ -495,77 +485,102 @@ window.addEventListener('error', (e) => {
             img.src
         );
 
-        img.src =
-            'https://picsum.photos/id/1/800/1000';
+        img.src = 'assets/images/lucky-hotel-2.jpg';
     }
 
 }, true);
 
 // === НАВИГАЦИЯ ===
 function initNavigation() {
-    const scrollContainer = document.getElementById('horizontalScroll');
-    const prevBtn = document.getElementById('navPrev');
-    const nextBtn = document.getElementById('navNext');
-    const dotsContainer = document.getElementById('navDots');
-    if (!scrollContainer || !prevBtn || !nextBtn || !dotsContainer) return;
+    const track = document.getElementById('memoriesContainer');
 
-    const cards = document.querySelectorAll('.film-card');
-    const cardCount = cards.length;
-    if (cardCount === 0) return;
+    const prevBtn = document.querySelector('.card-arrow-left');
+    const nextBtn = document.querySelector('.card-arrow-right');
 
-    // Создание точек
-    dotsContainer.innerHTML = '';
-    for (let i = 0; i < cardCount; i++) {
-        const dot = document.createElement('div');
-        dot.classList.add('nav-dot');
-        dot.dataset.index = i;
-        dot.addEventListener('click', () => goToCard(i));
-        dotsContainer.appendChild(dot);
-    }
-    const dots = document.querySelectorAll('.nav-dot');
+    if (!track || !prevBtn || !nextBtn) return;
 
-    function goToCard(index) {
-        index = Math.max(0, Math.min(index, cardCount - 1));
-        const cardWidth = scrollContainer.clientWidth;
-        scrollContainer.scrollTo({ left: index * cardWidth, behavior: 'smooth' });
+    let isScrolling = false;
+
+    function getMaxScroll() {
+        return Math.max(0, track.scrollWidth - track.clientWidth);
     }
 
-    function updateActiveDot() {
-        const scrollLeft = scrollContainer.scrollLeft;
-        const cardWidth = scrollContainer.clientWidth;
-        let activeIndex = Math.round(scrollLeft / cardWidth);
-        activeIndex = Math.min(activeIndex, cardCount - 1);
-        dots.forEach((dot, idx) => {
-            dot.classList.toggle('active', idx === activeIndex);
+    function updateButtons() {
+        const maxScroll = getMaxScroll();
+        const left = track.scrollLeft;
+
+        if (maxScroll === 0) {
+            prevBtn.style.opacity = '0';
+            prevBtn.style.pointerEvents = 'none';
+            nextBtn.style.opacity = '0';
+            nextBtn.style.pointerEvents = 'none';
+            return;
+        }
+
+        const atStart = left <= 5;
+        const atEnd = left >= maxScroll - 5;
+
+        // левая кнопка
+        if (atStart) {
+            prevBtn.style.opacity = '0';
+            prevBtn.style.pointerEvents = 'none';
+        } else {
+            prevBtn.style.opacity = '1';
+            prevBtn.style.pointerEvents = 'auto';
+        }
+
+        // правая кнопка
+        if (atEnd) {
+            nextBtn.style.opacity = '0';
+            nextBtn.style.pointerEvents = 'none';
+        } else {
+            nextBtn.style.opacity = '1';
+            nextBtn.style.pointerEvents = 'auto';
+        }
+    }
+
+    function scrollToOffset(direction) {
+        if (isScrolling) return;
+
+        const card = track.querySelector('.film-card');
+        const cardWidth = card
+            ? card.getBoundingClientRect().width
+            : track.clientWidth * 0.9;
+
+        const step = cardWidth * 1.1;
+
+        isScrolling = true;
+
+        track.scrollBy({
+            left: direction * step,
+            behavior: 'smooth'
         });
-        // Отключаем кнопки на краях
-        if (activeIndex === 0) {
-            prevBtn.setAttribute('disabled', 'disabled');
-        } else {
-            prevBtn.removeAttribute('disabled');
-        }
-        if (activeIndex === cardCount - 1) {
-            nextBtn.setAttribute('disabled', 'disabled');
-        } else {
-            nextBtn.removeAttribute('disabled');
-        }
+
+        setTimeout(() => {
+            isScrolling = false;
+            updateButtons();
+        }, 450);
     }
 
     prevBtn.addEventListener('click', () => {
-        const scrollLeft = scrollContainer.scrollLeft;
-        const cardWidth = scrollContainer.clientWidth;
-        const currentIndex = Math.round(scrollLeft / cardWidth);
-        if (currentIndex > 0) goToCard(currentIndex - 1);
+        scrollToOffset(-1);
     });
+
     nextBtn.addEventListener('click', () => {
-        const scrollLeft = scrollContainer.scrollLeft;
-        const cardWidth = scrollContainer.clientWidth;
-        const currentIndex = Math.round(scrollLeft / cardWidth);
-        if (currentIndex < cardCount - 1) goToCard(currentIndex + 1);
+        scrollToOffset(1);
     });
-    scrollContainer.addEventListener('scroll', () => requestAnimationFrame(updateActiveDot));
-    window.addEventListener('resize', updateActiveDot);
-    updateActiveDot();
+
+    let raf = null;
+
+    track.addEventListener('scroll', () => {
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(updateButtons);
+    });
+
+    window.addEventListener('resize', updateButtons);
+
+    // первичная инициализация
+    setTimeout(updateButtons, 50);
 }
 
 // вызываем после загрузки DOM

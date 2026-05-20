@@ -1,26 +1,28 @@
-// Анимации с использованием GSAP
 function initAnimations() {
     // Регистрируем ScrollTrigger
     if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
         
         // Анимация появления карточек при скролле
-        gsap.utils.toArray('.film-card').forEach((card, index) => {
-            gsap.from(card, {
-                scrollTrigger: {
-                    trigger: card,
-                    start: 'top 85%',
-                    end: 'bottom 20%',
-                    toggleActions: 'play none none reverse',
-                    once: false
-                },
-                opacity: 0,
-                y: 100,
-                duration: 0.8,
-                delay: index * 0.15,
-                ease: 'power2.out'
-            });
-        });
+
+        if (windowWith > 769) {
+          gsap.utils.toArray('.film-card').forEach((card, index) => {
+              gsap.from(card, {
+                  scrollTrigger: {
+                      trigger: card,
+                      start: 'top 85%',
+                      end: 'bottom 20%',
+                      toggleActions: 'play none none reverse',
+                      once: false
+                  },
+                  opacity: 0,
+                  y: 100,
+                  duration: 0.8,
+                  delay: index * 0.15,
+                  ease: 'power2.out'
+              });
+          });
+        }
         
         // Анимация для hero секции
         gsap.from('.hero-content', {
