@@ -98,38 +98,3 @@
     z-index: 1000;
     padding: 0 1rem;
 }
-
-.card-arrow {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 1px solid rgba(196,155,63,0.6);
-    background: rgba(0,0,0,0.6);
-    color: #fff;
-    font-size: 2rem;
-    cursor: pointer;
-    pointer-events: auto;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    backdrop-filter: blur(10px);
-
-    transition: all 0.25s ease;
-}
-
-.card-arrow:hover {
-    transform: scale(1.1);
-    background: rgba(196,155,63,0.2);
-    border-color: rgba(196,155,63,1);
-}
-
-.card-arrow:active {
-    transform: scale(0.95);
-}
-
-.card-arrow.disabled {
-    opacity: 0;
-    pointer-events: none;
-}

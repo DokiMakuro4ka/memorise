@@ -1,8 +1,7 @@
-// Данные о друзьях
 const friendsData = {
     dasha: {
         name: 'Даша',
-        url: 'https://t.me/@daariavvv',
+        url: 'https://t.me/daariavvv',
         achievement: 'королева дедукции',
         stats: '85% разгаданных загадок',
         emoji: '👑',
@@ -10,69 +9,160 @@ const friendsData = {
     },
     alena: {
         name: 'Алёна',
-        url: 'https://t.me/@chockoladtkkka',
+        url: 'https://t.me/chockoladtkkka',
         achievement: 'мастер секретов',
         stats: 'нашла 3 тайника и 5 скрытых предметов',
         emoji: '🔍',
-        message: 'Твоя внимательность к деталям не знает границ! Ты наш главный исследователь!'
+        message: 'Твоя внимательность к деталям не знает границ!'
     },
     ilya: {
         name: 'Илья',
-        url: 'https://t.me/@Plesenb_1',
+        url: 'https://t.me/Plesenb_1',
         achievement: 'король зеркал',
         stats: 'разгадал 5 сложнейших головоломок',
         emoji: '🎯',
-        message: 'Твой логический склад ума — наше секретное оружие! Продолжай в том же духе!'
+        message: 'Твой логический склад ума — наше секретное оружие!'
     },
     artem: {
         name: 'Артём',
-        url: 'https://t.me/@Artem2719',
+        url: 'https://t.me/Artem2719',
         achievement: 'мускулы команды',
         stats: 'открыл 2 потайные двери физической силой',
         emoji: '💪',
-        message: 'Твоя решительность и сила духа вдохновляют! Без тебя мы бы застряли!'
+        message: 'Твоя решительность и сила духа вдохновляют!'
     },
     rita: {
         name: 'Рита',
-        url: 'https://t.me/@llis_marr',
+        url: 'https://t.me/llis_marr',
         achievement: 'гений шифров',
         stats: 'угадала код с 1 раза в 2 квестах',
         emoji: '🧩',
-        message: 'Твоя интуиция и умение видеть закономерности поражают! Ты наше секретное оружие!'
+        message: 'Твоя интуиция и умение видеть закономерности поражают!'
     }
 };
 
-// Инициализация кликабельных ссылок для друзей
+let isOpeningFriend = false;
+
 function initFriendsLinks() {
-    const links = document.querySelectorAll('.friend-link');
-    
+
+    const links =
+        document.querySelectorAll('.friend-link');
+
     links.forEach(link => {
+
         link.addEventListener('click', (e) => {
+
             e.preventDefault();
-            const friendId = link.dataset.friend;
-            const friend = friendsData[friendId];
-            
-            if (friend) {
-                // Открываем ссылку (если есть)
-                if (friend.url && friend.url !== 'https://') {
-                    window.open(friend.url, '_blank');
-                }
-                
-                // Показываем персональную пасхалку
-                showFriendEasterEgg(friend);
-                
-                // Звук
-                if (window.sound) window.sound.play('success');
+
+            if (isOpeningFriend) return;
+            isOpeningFriend = true;
+
+            const friendId =
+                link.dataset.friend;
+
+            const friend =
+                friendsData[friendId];
+
+            if (!friend) {
+                isOpeningFriend = false;
+                return;
             }
+
+            if (window.sound) {
+                window.sound.play('success');
+            }
+
+            const overlay =
+                document.createElement('div');
+
+            overlay.style.cssText = `
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.96);
+                backdrop-filter: blur(12px);
+                display: flex;
+                flex-direction: column;
+                align-items: center;\
+                justify-content: center;
+                z-index: 999999;
+                color: white;
+                font-family: Inter, sans-serif;
+                text-align: center;
+                padding: 20px;
+            `;
+
+            overlay.innerHTML = `
+                <div style="font-size: 3rem; margin-bottom: 20px;">
+                    ${friend.emoji}
+                </div>
+
+                <div style="font-size: 1.6rem; font-weight: 700;">
+                    ${friend.name}
+                </div>
+
+                <div style="opacity: 0.7; margin-top: 10px;">
+                    ${friend.achievement}
+                </div>
+
+                <div id="friendCountdown" style="
+                    margin-top: 30px;
+                    font-size: 4rem;
+                    font-weight: 800;
+                    color: #c49b3f;
+                ">
+                    3
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            let seconds = 3;
+
+            const counter =
+                overlay.querySelector('#friendCountdown');
+
+            const timer = setInterval(() => {
+
+                seconds--;
+
+                if (counter) {
+                    counter.textContent = seconds;
+                }
+
+                if (seconds <= 0) {
+                    clearInterval(timer);
+
+                    // 1. сначала пасхалка
+                    showFriendEasterEgg(friend);
+
+                    // 2. затем убираем overlay
+                    overlay.remove();
+
+                    // 3. затем переход
+                    setTimeout(() => {
+                        if (friend.url) {
+                            const win = window.open(friend.url, '_blank');
+
+                            // fallback на случай блокировки popup
+                            if (!win) {
+                                window.location.href = friend.url;
+                            }
+                        }
+
+                        isOpeningFriend = false;
+                    }, 2500);
+                }
+
+            }, 1000);
         });
-        
-        // Эффект при наведении
+
         link.addEventListener('mouseenter', () => {
-            if (window.sound) window.sound.play('hover');
+            if (window.sound) {
+                window.sound.play('hover');
+            }
         });
     });
 }
-
 // Показ пасхалки для друга
 function showFriendEasterEgg(friend) {
     // Создаём временное уведомление в стиле тоста

@@ -260,7 +260,7 @@ function showWelcomeMessage() {
                     <strong>Добро пожаловать в наш кинозал!</strong><br>
 
                     <small>
-                        Листайте вниз, а над карточками крутите колёсико мыши, чтобы погрузиться в атмосферу воспоминаний.
+                        Листайте вниз, а над карточками свайпайте влево/вправо, чтобы погрузиться в атмосферу воспоминаний.
                     </small>
                 </div>
             </div>
@@ -489,106 +489,6 @@ window.addEventListener('error', (e) => {
     }
 
 }, true);
-
-// === НАВИГАЦИЯ ===
-function initNavigation() {
-    const track = document.getElementById('memoriesContainer');
-
-    const prevBtn = document.querySelector('.card-arrow-left');
-    const nextBtn = document.querySelector('.card-arrow-right');
-
-    if (!track || !prevBtn || !nextBtn) return;
-
-    let isScrolling = false;
-
-    function getMaxScroll() {
-        return Math.max(0, track.scrollWidth - track.clientWidth);
-    }
-
-    function updateButtons() {
-        const maxScroll = getMaxScroll();
-        const left = track.scrollLeft;
-
-        if (maxScroll === 0) {
-            prevBtn.style.opacity = '0';
-            prevBtn.style.pointerEvents = 'none';
-            nextBtn.style.opacity = '0';
-            nextBtn.style.pointerEvents = 'none';
-            return;
-        }
-
-        const atStart = left <= 5;
-        const atEnd = left >= maxScroll - 5;
-
-        // левая кнопка
-        if (atStart) {
-            prevBtn.style.opacity = '0';
-            prevBtn.style.pointerEvents = 'none';
-        } else {
-            prevBtn.style.opacity = '1';
-            prevBtn.style.pointerEvents = 'auto';
-        }
-
-        // правая кнопка
-        if (atEnd) {
-            nextBtn.style.opacity = '0';
-            nextBtn.style.pointerEvents = 'none';
-        } else {
-            nextBtn.style.opacity = '1';
-            nextBtn.style.pointerEvents = 'auto';
-        }
-    }
-
-    function scrollToOffset(direction) {
-        if (isScrolling) return;
-
-        const card = track.querySelector('.film-card');
-        const cardWidth = card
-            ? card.getBoundingClientRect().width
-            : track.clientWidth * 0.9;
-
-        const step = cardWidth * 1.1;
-
-        isScrolling = true;
-
-        track.scrollBy({
-            left: direction * step,
-            behavior: 'smooth'
-        });
-
-        setTimeout(() => {
-            isScrolling = false;
-            updateButtons();
-        }, 450);
-    }
-
-    prevBtn.addEventListener('click', () => {
-        scrollToOffset(-1);
-    });
-
-    nextBtn.addEventListener('click', () => {
-        scrollToOffset(1);
-    });
-
-    let raf = null;
-
-    track.addEventListener('scroll', () => {
-        if (raf) cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(updateButtons);
-    });
-
-    window.addEventListener('resize', updateButtons);
-
-    // первичная инициализация
-    setTimeout(updateButtons, 50);
-}
-
-// вызываем после загрузки DOM
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initNavigation);
-} else {
-    initNavigation();
-}
 
 // =========================================================
 // ПРЕЛОАДЕР С ОТСЛЕЖИВАНИЕМ КАРТОЧЕК, ИЗОБРАЖЕНИЙ И ВИДЕО

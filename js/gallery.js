@@ -71,11 +71,6 @@ class Gallery {
                                 <button class="watch-trailer" data-id="${memory.id}">
                                     📸 Смотреть фото →
                                 </button>
-
-                                <button class="like-btn" data-id="${memory.id}">
-                                    ❤️ 
-                                    <span class="likes-count">
-                                        ${memory.likes || 0}
                                     </span>
                                 </button>
                             </div>
@@ -85,26 +80,6 @@ class Gallery {
             </div>
         `).join('');
     }
-        
-        
-        initLikes() {
-            document.querySelectorAll('.like-btn').forEach(btn => {
-                const id = btn.dataset.id;
-                const countSpan = btn.querySelector('.likes-count');
-                const savedLikes = localStorage.getItem(`like_${id}`);
-                if (savedLikes) countSpan.textContent = savedLikes;
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    let likes = parseInt(countSpan.textContent) || 0;
-                    likes++;
-                    countSpan.textContent = likes;
-                    localStorage.setItem(`like_${id}`, likes);
-                    btn.classList.add('liked');
-                    setTimeout(() => btn.classList.remove('liked'), 300);
-                    if (window.sound) window.sound.play('click');
-                });
-            });
-        }
         
         initLazyLoading() {
             const observer = new IntersectionObserver((entries) => {
