@@ -1,7 +1,7 @@
 const friendsData = {
     dasha: {
         name: 'Даша',
-        url: 'https://t.me/daariavvv',
+        url: 'https://t.me/',
         achievement: 'королева дедукции',
         stats: '85% разгаданных загадок',
         emoji: '👑',
@@ -9,7 +9,7 @@ const friendsData = {
     },
     alena: {
         name: 'Алёна',
-        url: 'https://t.me/chockoladtkkka',
+        url: 'https://t.me/',
         achievement: 'мастер секретов',
         stats: 'нашла 3 тайника и 5 скрытых предметов',
         emoji: '🔍',
@@ -17,7 +17,7 @@ const friendsData = {
     },
     ilya: {
         name: 'Илья',
-        url: 'https://t.me/Plesenb_1',
+        url: 'https://t.me/',
         achievement: 'король зеркал',
         stats: 'разгадал 5 сложнейших головоломок',
         emoji: '🎯',
@@ -25,7 +25,7 @@ const friendsData = {
     },
     artem: {
         name: 'Артём',
-        url: 'https://t.me/Artem2719',
+        url: 'https://t.me/',
         achievement: 'мускулы команды',
         stats: 'открыл 2 потайные двери физической силой',
         emoji: '💪',
@@ -33,7 +33,7 @@ const friendsData = {
     },
     rita: {
         name: 'Рита',
-        url: 'https://t.me/llis_marr',
+        url: 'https://t.me/',
         achievement: 'гений шифров',
         stats: 'угадала код с 1 раза в 2 квестах',
         emoji: '🧩',
